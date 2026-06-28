@@ -15,6 +15,7 @@ init_rel_phase = 0:pi/10:2*pi;
 [X, Y] = ndgrid(tau_vec,init_rel_phase);
 param_space = [X(:) Y(:)];
 Z = zeros(size(param_space,1),1);
+cycle_variability = zeros(size(param_space,1),1);
 rel_phase_r = zeros(size(param_space,1),1);
 rel_phase = zeros(size(param_space,1),1);
 rel_phase_error = zeros(size(param_space,1),1);
@@ -23,16 +24,17 @@ tau_1 = 2*pi/10;
 tau_leader = 2*pi/12;
 omega_delta = zeros(size(param_space,1),1);
 for r = 1:size(param_space,1)
-    [rel_phase_r(r),rel_phase(r),rel_phase_error(r),tau(r,:),omega_delta(r)] = ...
+    [cycle_variability(r),rel_phase_r(r),rel_phase(r),rel_phase_error(r),tau(r,:),omega_delta(r)] = ...
         anticipatory_kuramoto(Kvec,epsilon,[tau_1 param_space(r,1)],tau_leader,param_space(r,2),.5,0,0);
 end
 
 
 figure(1)
-surf(X,Y,reshape(rel_phase_error,size(X,1),[]),"EdgeColor","black")
+% surf(X,Y,reshape(rel_phase_error,size(X,1),[]),"EdgeColor","black")
+surf(X,Y,reshape(cycle_variability,size(X,1),[]),"EdgeColor","black")
 xlabel('\tau_2 [rad]')
 ylabel('\phi_{leader,0} - \phi_{follower,0} [rad]')
-zlabel('\phi')
+zlabel('CV_{ISI,follower}')
 ylim([0 2*pi])
 set(gcf,'color','w')
 set(gcf, 'PaperPosition', [0 0 4 3])
@@ -45,6 +47,34 @@ end
 
 
 figure(2)
+surf(X,Y,reshape(cycle_variability,size(X,1),[]),"EdgeColor","none")
+colormap cool
+cb = colorbar;
+ylabel(cb, 'CV_{ISI,follower}')
+
+xlabel('\tau_{follower,2} [degrees]')
+ylabel('\phi_{leader,0} - \phi_{follower,0} [degrees]')
+xlim([0 2*pi])
+set(gca, 'XDir', 'reverse')
+set(gca, 'YDir', 'reverse')
+set(gca,'XTick',round(0:pi/2:2*pi,2))
+set(gca,'XTickLabel',(0:pi/2:2*pi)./pi*180)
+set(gca,'YTick',round(0:pi/2:2*pi,2))
+set(gca,'YTickLabel',(0:pi/2:2*pi)./pi*180)
+ylim([0 2*pi])
+set(gca,'view',[180 90]) % set(gca,'view',[-266 5])
+zlabel('\Delta \omega, %')
+set(gcf,'color','w')
+set(gcf, 'PaperPosition', [0 0 5 4])
+set(gcf, 'InvertHardcopy', 'off')
+set(gca,'fontsize',14)
+if printfigureflag == 1
+    f = fullfile(pwd,['omega_drift_' char(datetime('now','TimeZone','local','Format','y-MM-d-hhmmss')) '.jpeg']);
+    print('-djpeg','-r600',f)
+end
+
+
+figure(3)
 surf(X,Y,reshape(omega_delta,size(X,1),[]),"EdgeColor","none")
 colormap cool
 cb = colorbar;
@@ -72,7 +102,7 @@ if printfigureflag == 1
 end
 
 
-figure(3)
+figure(4)
 index = param_space(:,2)==0;
 tau_diff = tau_1 + param_space(index,1) - tau_leader;
 plot(tau_diff,omega_delta(index,1),'-ok','linewidth',2);
@@ -94,7 +124,7 @@ if printfigureflag == 1
 end
 
 
-figure(4)
+figure(5)
 index = param_space(:,1) == 0;
 plot(param_space(index,2),omega_delta(index,1),'-ok','linewidth',2);
 hold on
