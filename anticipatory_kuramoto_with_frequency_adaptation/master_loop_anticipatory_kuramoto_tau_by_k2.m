@@ -1,16 +1,21 @@
-% This script explores some of the parameter space of the anticipatory 
-% delayed self-feedback Kuramoto-style model introduced in the manuscript
-% "Delay and amplification of auditory feedback for walking: effects on 
-% variability, cadence, and temporal cortex activity"
+% This script explores some of the parameter space of the anticipatory
+% frequency adaptive delayed self-feedback Kuramoto-style model introduced 
+% in the manuscript "Delay and amplification of auditory feedback for 
+% walking: effects on variability, cadence, and temporal cortex activity".
 % Details and more help can be found in anticipatory_kuramoto_rk4.m. 
 % It uses an RK4 solver to run the model with the given initial conditions.
-%Dobri Dotov, UNO, 2026
+% Running the master script will explore a grid on the parameter space 
+% of k_2 and tau_2, and it will repeat the simulation the given number of
+% times for each combination of parameters. Because of iterations, running
+% the entire loop in the master script will take a few hours on a 
+% consumer-grade computer.
+% Dobri Dotov, UNO, 2026
 
 REZ = table('Size', [0, 11], ...
     'VariableTypes', {'double','double','double','double','double','double','double','double','double','double','double'}, ...
     'VariableNames', {'k1','k2','epsilon1','epsilon2','taum','taus1','taus2','relphase0','sigma','deltaOmega','CV'});
 
-repetitions = 5e2;
+repetitions = 1e2; % For the paper this was set to 5e2.
 for n =  1:repetitions
     % Parameter space
     k_follower_1 = 2;
@@ -56,5 +61,4 @@ end
 % writetable(REZ,['rez_' char(datetime("now",'Format','yyyy-MM-dd')) '.csv']);
 
 % Visualize
-% figures_single_run;
 figures_across_runs;

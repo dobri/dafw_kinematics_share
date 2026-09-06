@@ -14,7 +14,7 @@ for i = 1:height(G)
     Z_dW(r,c) = G.mean_deltaOmega(i);
 end
 
-figure(134506897)
+figure(1)
 surf(TAUS2_dW, K2_dW, Z_dW, 'EdgeColor', 'none');
 colormap('cool');
 cb = colorbar;
@@ -65,7 +65,7 @@ for i = 1:height(G)
 end
 baselinecv = mean(Z_dW(K2_dW==0));
 
-figure(134506898)
+figure(2)
 surf(TAUS2_dW, K2_dW, Z_dW, 'EdgeColor', 'none');
 colormap('cool');
 cb = colorbar;
