@@ -733,8 +733,9 @@ end
 
 function fig_param_space(space,spaceOut)
 
+print_fig = 0;
 
-%% ============================ delta cadence  ============================
+%% delta cadence
 [X,Y] = meshgrid(space.delayGrid, space.ampGrid-space.ampNatural);
 Z = spaceOut.dCad; % delta cadence
 
@@ -793,8 +794,14 @@ hold off
 
 view([324.02 26.38])
 
+if print_fig == 1
+    f = fullfile(pwd,['tempo_3d_' char(datetime('now','TimeZone','local','Format','y-MM-d-hhmmss'))]);
+    print('-djpeg','-r600',[f '.jpg'])
+    print('-dsvg',[f '.svg'])
+end
 
-%% ============================ delta cv  ============================
+
+%% delta cv
 [X,Y] = meshgrid(space.delayGrid, space.ampGrid-space.ampNatural);
 Z = spaceOut.dCadCV;
 
@@ -868,5 +875,11 @@ axis tight
 hold off
 
 view([302.3 41.4])
+
+if print_fig == 1
+    f = fullfile(pwd,['cv_3d_' char(datetime('now','TimeZone','local','Format','y-MM-d-hhmmss'))]);
+    print('-djpeg','-r600',[f '.jpg'])
+    print('-dsvg',[f '.svg'])
+end
 
 end
