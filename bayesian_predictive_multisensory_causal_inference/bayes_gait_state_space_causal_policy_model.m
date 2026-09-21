@@ -51,10 +51,10 @@ clear; close all
 rng(1, 'twister');
 
 %% Natural baseline auditory gain.
-% Important: this is intentionally > 0. The baseline condition is not a
-% literal no-sound condition; it represents ordinary walking where natural
+% This is intentionally > 0. The baseline condition is not a literal 
+% no-sound condition; it represents ordinary walking where natural 
 % footstep sounds are present but low-gain and in the background.
-space.ampNatural = 0.20;
+sim.ampNatural = 0.20;
 
 %% Natural baseline condition
 %
@@ -69,7 +69,7 @@ theta = defaultTheta();
 sim.nTrials = 80;      % repeated simulated trials per condition
 sim.nSteps  = 1200;    % steps per simulated trial
 sim.burnIn  = 200;     % discard early transient steps
-baseline = runCondition(0, space.ampNatural, theta, sim);
+baseline = runCondition(0, sim.ampNatural, theta, sim);
 baseCad = baseline.cadMean;
 baseCV  = baseline.cadCV;
 baseIntervalCV = baseline.intervalCV;
@@ -207,17 +207,13 @@ switch selected_parameters_or_full_space_flag
         % architecture maps those two experimental manipulations onto:
         %   - mean cadence, expressed as percent change from natural baseline
         %   - cadence variability, expressed as percent change in CV(cadence)
-        space.delayGrid = linspace(0, 1, 40);
-        space.ampGrid = linspace(0.20, 1.20, 40);
-        spaceSim.nTrials = 80;
-        spaceSim.nSteps = 1200;
-        spaceSim.burnIn = 200;
-
-        spaceOut = runParameterSpace(space.delayGrid, space.ampGrid, theta, ...
-            spaceSim, baseCad, baseCV, baseIntervalCV);
+        sim.delayGrid = linspace(0, 1, 40);
+        sim.ampGrid = linspace(0.20, 1.20, 40);
+        spaceOut = runParameterSpace(sim.delayGrid, sim.ampGrid, theta, ...
+            sim, baseCad, baseCV, baseIntervalCV);
 
         % creates the figure which is figure 7 in the manuscript.
-        fig_param_space(space, spaceOut)
+        fig_param_space(sim, spaceOut)
 end
 
 
@@ -771,16 +767,6 @@ contour3(X,Y,Z,...
     'c',...
     'LineWidth',3);
 
-
-% Custom cyan -> purple colormap
-cmap = [
-    0.10 0.85 0.90
-    0.25 0.75 0.95
-    0.45 0.60 0.95
-    0.60 0.45 0.95
-    0.75 0.25 0.95
-    0.95 0.05 0.90];
-
 colormap(cool(256));
 
 % Symmetric color limits around zero
@@ -834,13 +820,11 @@ mesh(X,Y,...
     'FaceColor','none',...
     'LineWidth',0.5);
 
-
 % Zero contour projected onto the reference plane
 contour3(X,Y,Z,...
     [0 0],...
     'c',...
     'LineWidth',2);
-
 
 % Custom cyan -> purple colormap
 cmap = [
@@ -855,7 +839,6 @@ colormap(interp1(...
     linspace(0,1,size(cmap,1)),...
     cmap,...
     linspace(0,1,256)));
-
 
 % Symmetric color limits around zero
 cadLim = max(abs(Z(:)));
